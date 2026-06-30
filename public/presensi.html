@@ -56,7 +56,7 @@
     .server-badge {
       position: absolute;
       top: 20px;
-      right: 20px;
+      left: 20px;
       background: #f0fff4;
       padding: 5px 12px;
       border-radius: 20px;
@@ -68,6 +68,24 @@
       display: flex;
       align-items: center;
       gap: 6px;
+    }
+
+    .clock-badge {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: #f0f4ff;
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--primary);
+      border: 1px solid #d6e0ff;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-variant-numeric: tabular-nums;
     }
 
     .dot {
@@ -429,7 +447,11 @@
   <div class="login-container">
     <div class="server-badge">
       <span class="dot"></span>
-      Id Server : YoriAPP S1
+      Id Server : YR-1
+    </div>
+    <div class="clock-badge" id="clockBadge">
+      <i class="fas fa-clock"></i>
+      <span id="clockText">--:--:--</span>
     </div>
     <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c8/Lambang_Kabupaten_Ngawi_%28svg%29.svg/500px-Lambang_Kabupaten_Ngawi_%28svg%29.svg.png" alt="Logo Kabupaten" class="logo">
     <h2>Presensi Pegawai</h2>
@@ -475,17 +497,6 @@
     <a href="https://www.yoriapp.site/cekpresensi" class="btn btn-primary" style="margin-top: 18px; text-decoration: none;">
       <i class="fas fa-clipboard-check"></i> CEK PRESENSI HARIAN
     </a>
-
-    <div class="info-bar">
-      <div class="info-title"><i class="fas fa-bullhorn"></i> E-MONITORING & PENGAJUAN PSW</div>
-      <p style="font-size: 0.75rem; color: #555;">Silahkan Salin / Ketik Link dibawah ini untuk melakukan monitoring dan pengajuan PSW:</p>
-      <div class="info-link-container">
-        <div class="info-url" id="newUrl">yoriapp.site/e-presensi</div>
-        <button class="copy-btn" id="copyUrlBtn" title="Salin Link">
-          <i class="fas fa-copy"></i>
-        </button>
-      </div>
-    </div>
 
     <div class="footer">© 2026 Sistem Presensi ASN Korwil</div>
   </div>
@@ -614,18 +625,22 @@
     const resetBtnText = document.getElementById('resetBtnText');
     const resetMessageEl = document.getElementById('resetMessage');
 
-    document.getElementById('copyUrlBtn').addEventListener('click', function() {
-      const textToCopy = document.getElementById('newUrl').innerText;
-      const dummy = document.createElement("textarea");
-      document.body.appendChild(dummy);
-      dummy.value = textToCopy;
-      dummy.select();
-      document.execCommand("copy");
-      document.body.removeChild(dummy);
-      const toast = document.getElementById("toast");
-      toast.className = "show";
-      setTimeout(function(){ toast.className = toast.className.replace("show", ""); }, 3000);
-    });
+    // ---------- JAM DIGITAL (badge kanan atas) ----------
+    function updateClockBadge() {
+      const el = document.getElementById('clockText');
+      if (!el) return;
+      const now = new Date();
+      const formatted = now.toLocaleTimeString('id-ID', {
+        timeZone: 'Asia/Jakarta',
+        hour12: false,
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit'
+      });
+      el.textContent = formatted;
+    }
+    updateClockBadge();
+    setInterval(updateClockBadge, 1000);
 
     // ---------- FITUR DETEKSI WAKTU DENGAN TOLERANSI 1 MENIT (60 detik) ----------
     const timeAlertContainer = document.getElementById('timeAlertContainer');
